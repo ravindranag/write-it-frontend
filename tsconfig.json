@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": ["ES6", "dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -15,8 +15,12 @@
     "jsx": "preserve",
     "incremental": true,
     "baseUrl": ".",
+	"noImplicitAny": true,
+	"noImplicitThis": true,
+	"strictNullChecks": true,
     "paths": {
-      "@/*": ["./*"]
+      "@/styles*": ["./styles/*"],
+	  "@/components/*": ["./components/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
