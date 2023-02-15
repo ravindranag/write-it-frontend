@@ -66,7 +66,7 @@ const LoginForm = (): JSX.Element => {
 					Login to continue
 				</Typography>
 			</Stack>
-			{error && (<Collapse
+			<Collapse
 				in={error ? true : false}
 			>
 				<Alert
@@ -74,7 +74,7 @@ const LoginForm = (): JSX.Element => {
 				>
 					{ error }
 				</Alert>
-			</Collapse>)}
+			</Collapse>
 			<Stack
 				gap='16px'
 			>

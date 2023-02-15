@@ -23,7 +23,7 @@ const Header = (): JSX.Element => {
 				<Typography
 					variant='overline'
 				>
-					WriteIt
+					Write It
 				</Typography>
 			</Stack>
 		</AppBar>
