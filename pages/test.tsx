@@ -1,10 +1,30 @@
+import Page from "@/components/layout/Page";
+import { Button, Typography, Stack } from "@mui/material";
 import { NextPage } from "next";
+import Link from "next/link";
 
 const Test: NextPage = () => {
 	return (
-		<>
-			<img src="http://localhost:8000/cdn/users/rv.jpg" alt="rv pfp" />
-		</>
+		<Page>
+			<div>
+				<Typography
+					variant="h1"
+				>
+					Test Page
+				</Typography>
+				<Link
+					href='/'
+					passHref
+				>
+					<Button
+						variant='contained'
+					>
+						Home
+					</Button>
+				</Link>
+				
+			</div>
+		</Page>
 	)
 }
 

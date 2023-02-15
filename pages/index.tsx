@@ -1,10 +1,11 @@
 import { NextPage } from "next";
 import { Button, Stack, Typography } from '@mui/material'
-
+import Page from "@/components/layout/Page";
+import Link from "next/link";
 
 const Home: NextPage = () => {
 	return (
-		<>
+		<Page>
 			<Stack>
 				<Typography
 					
@@ -12,14 +13,19 @@ const Home: NextPage = () => {
 				>
 					Hello World
 				</Typography>
-				<Button
-					color="primary"
-					variant="contained"
+				<Link
+					href='/test'
+					passHref
 				>
-					Hi
-				</Button>
+					<Button
+						color="primary"
+						variant="contained"
+					>
+						Test
+					</Button>
+				</Link>
 			</Stack>
-		</>
+		</Page>
 	)
 }
 

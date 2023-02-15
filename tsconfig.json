@@ -20,7 +20,8 @@
 	"strictNullChecks": true,
     "paths": {
       "@/styles*": ["./styles/*"],
-	  "@/components/*": ["./components/*"]
+	  "@/components/*": ["./components/*"],
+	  "@/lib/*": ["./lib/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

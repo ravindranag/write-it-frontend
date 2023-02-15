@@ -8,7 +8,8 @@ const componentOptions: Components = {
 		},
 		styleOverrides: {
 			root: {
-				width: 'fit-content'
+				width: 'fit-content',
+				padding: '10px 20px'
 			}
 		}
 	},
