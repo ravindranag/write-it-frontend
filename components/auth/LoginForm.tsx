@@ -128,7 +128,7 @@ const LoginForm = (): JSX.Element => {
 						}}
 						color='GrayText'
 					>
-						Don't have an account? Create one
+						Don&#39;t have an account? Create one
 					</Typography>
 				</Link>
 			</Stack>
