@@ -15,6 +15,10 @@ const paletteOptions: PaletteOptions = {
 		main: '#ffffff',
 		light: '#ffffff',
 		dark: '#ffffff',
+	},
+	primary: {
+		main: '#000000',
+		contrastText: '#ffffff'
 	}
 }
 

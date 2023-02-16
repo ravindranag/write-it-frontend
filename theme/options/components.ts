@@ -7,10 +7,10 @@ const componentOptions: Components = {
 			disableRipple: true
 		},
 		styleOverrides: {
-			root: {
-				width: 'fit-content',
-				padding: '10px 20px'
-			}
+			root: ({ ownerState, theme }) => ({
+				width: ownerState.fullWidth ? '100%' : 'fit-content',
+				padding: '10px 16px'
+			})
 		}
 	},
 	MuiAppBar: {

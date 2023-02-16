@@ -14,8 +14,8 @@ const variants: Variants = {
 		opacity: 1
 	},
 	exit: {
-		x: 0,
-		y: -200,
+		x: 200,
+		y: 0,
 		opacity: 0
 	}
 }

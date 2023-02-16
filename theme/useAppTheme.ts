@@ -1,4 +1,4 @@
-import { ThemeOptions, createTheme } from '@mui/material'
+import { ThemeOptions, createTheme, responsiveFontSizes } from '@mui/material'
 import componentOptions from './options/components'
 import paletteOptions from './options/palette'
 import typographyOptions from './options/typography'
@@ -22,7 +22,7 @@ const useAppTheme = () => {
 
 	const theme = createTheme(themeOptions)
 
-	return theme
+	return responsiveFontSizes(theme)
 }
 
 export default useAppTheme
