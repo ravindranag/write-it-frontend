@@ -6,6 +6,16 @@ declare module '@mui/material/AppBar' {
 	}
 }
 
+const Logo = (): JSX.Element => {
+	return (
+		<Typography
+			variant='overline'
+		>
+			Write It
+		</Typography>
+	)
+}
+
 const Header = (): JSX.Element => {
 	return (
 		<AppBar
@@ -20,11 +30,7 @@ const Header = (): JSX.Element => {
 				direction='row'
 				padding='12px 24px'
 			>
-				<Typography
-					variant='overline'
-				>
-					Write It
-				</Typography>
+				<Logo />
 			</Stack>
 		</AppBar>
 	)

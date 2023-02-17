@@ -1,8 +1,10 @@
 import APIMethods from "@/lib/axios/api"
+import useUserSession from "@/lib/store/useUserSession"
 import { VisibilityOff, Visibility } from "@mui/icons-material"
-import { Alert, Button, Collapse, IconButton, Stack, TextField, Typography } from "@mui/material"
+import { Alert, Button, CircularProgress, Collapse, IconButton, Stack, TextField, Typography } from "@mui/material"
 import { useFormik } from "formik"
 import Link from "next/link"
+import { useRouter } from "next/router"
 import { useState } from "react"
 import * as yup from 'yup'
 
@@ -13,22 +15,30 @@ const formValidationSchema = yup.object({
 
 const LoginForm = (): JSX.Element => {
 	const [showPassword, setShowPassword] = useState(false)
+	const [isLoading, setIsLoading] = useState(false)
 	const [error, setError] = useState('')
+	const [setAccessToken] = useUserSession(state => [state.setAccessToken])
+	const router = useRouter()
 	const formik = useFormik({
 		initialValues: {
 			email: '',
 			password: ''
 		},
 		onSubmit: async ({ email, password }) => {
+			setIsLoading(v => true)
 			try {
 				const res = await APIMethods.auth.login({
 					email,
 					password
 				})
 				console.log(res.data)
+				setAccessToken(res.data.accessToken)
+				router.replace('/')
 			} catch(err: any) {
 				console.log('error while login', err.response.data)
 				setError(v => err.response.data.message)
+			} finally {
+				setIsLoading(v => false)
 			}
 		},
 		validationSchema: formValidationSchema
@@ -113,10 +123,12 @@ const LoginForm = (): JSX.Element => {
 			>
 				<Button
 					variant='contained'
-					onClick={() => formik.handleSubmit}
+					onClick={() => formik.handleSubmit()}
 					type='submit'
+					fullWidth
+					disabled={isLoading}
 				>
-					Login
+					{ isLoading ? <CircularProgress color='white' size={25} /> : 'Login' }
 				</Button>
 				<Link
 					href='/auth/signup'

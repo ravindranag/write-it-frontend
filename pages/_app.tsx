@@ -5,6 +5,7 @@ import { Stack } from '@mui/material'
 import { AnimatePresence } from 'framer-motion'
 import type { AppProps } from 'next/app'
 import AppTheme from 'theme/AppTheme'
+import NextNProgress from 'nextjs-progressbar'
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -13,6 +14,9 @@ export default function App({ Component, pageProps }: AppProps) {
 			minHeight='100vh'
 			justifyContent='space-between'
 		>
+			<NextNProgress 
+				color='black'
+			/>
 			<Header />
 			<Stack
 				flexGrow={1}
