@@ -9,7 +9,7 @@ import useSignUpStore from "@/lib/store/useSignUpStore"
 
 const profileValidationSchema = yup.object({
 	name: yup.string().required(),
-	username: yup.string().required().min(3),
+	username: yup.string().required().min(3).max(30).matches(/^[a-z,A-Z][a-z,A-Z,_,0-9]+$/gm, { message: 'Username cannot start with a number, can only contain (a-z), (A-Z), (0-9), and "_"' }),
 	bio: yup.string().required()
 })
 

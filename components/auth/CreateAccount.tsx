@@ -15,7 +15,7 @@ declare module "@mui/material/CircularProgress" {
 }
 
 const validationSchema = yup.object({
-	email: yup.string().email().required(),
+	email: yup.string().email().required().lowercase().strict(),
 	password: yup.string().required()
 })
 

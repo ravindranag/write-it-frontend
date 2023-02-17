@@ -9,7 +9,7 @@ import { useState } from "react"
 import * as yup from 'yup'
 
 const formValidationSchema = yup.object({
-	email: yup.string().email().required(),
+	email: yup.string().email().required().lowercase().strict(),
 	password: yup.string().required()
 })
 
