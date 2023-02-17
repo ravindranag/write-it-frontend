@@ -1,5 +1,6 @@
 import { Button, Stack, Typography } from "@mui/material"
 import MotionWrapper from "./MotionWrapper"
+import Link from "next/link"
 
 const NextSteps = (): JSX.Element => {
 	return (
@@ -12,6 +13,11 @@ const NextSteps = (): JSX.Element => {
 				gap='24px'
 			>
 				<Typography
+					variant="overline"
+				>
+					What&#39;s next?
+				</Typography>
+				<Typography
 					variant='h3'
 				>
 					Publish your writing or read other writer&#39;s work
@@ -19,18 +25,28 @@ const NextSteps = (): JSX.Element => {
 				<Stack
 					gap='16px'
 				>
-					<Button
-						variant="contained"
-						fullWidth
+					<Link
+						href='/new'
+						passHref
 					>
-						Write a new article
-					</Button>
-					<Button
-						variant='outlined'
-						fullWidth
+						<Button
+							variant="contained"
+							fullWidth
+						>
+							Write a new article
+						</Button>
+					</Link>
+					<Link
+						href='/'
+						passHref
 					>
-						Continue reading
-					</Button>
+						<Button
+							variant='outlined'
+							fullWidth
+						>
+							Continue reading
+						</Button>
+					</Link>
 				</Stack>
 			</Stack>
 		</MotionWrapper>
