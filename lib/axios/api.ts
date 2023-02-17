@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosInstance, AxiosProgressEvent } from "axios";
 
 type LoginSignUpData = {
 	email: String,
@@ -11,6 +11,12 @@ type CreateProfileData = {
 	bio: string
 	avatar?: string
 }
+
+type UpdateAvatarData = {
+	avatar: File
+}
+
+type UploadProgressCallback = (progressEvent: AxiosProgressEvent) => void
 
 const APIInstance: AxiosInstance = axios.create({
 	baseURL: 'https://write-it.onrender.com'
@@ -28,6 +34,14 @@ const APIMethods = {
 		signUp: (data: LoginSignUpData) => APIInstance.post('/user/signup', data),
 		createProfile: (data: CreateProfileData) => APIInstance.post('/profile', data),
 		verify: () => APIInstance.get('/user/verify')
+	},
+	profile: {
+		setAvatar: (data: UpdateAvatarData, trackUploadProgress: UploadProgressCallback) => APIInstance.post('/profile/avatar', data, {
+			headers: {
+				'Content-Type': 'multipart/form-data'
+			},
+			onUploadProgress: trackUploadProgress
+		})
 	}
 }
 

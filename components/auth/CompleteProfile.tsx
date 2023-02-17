@@ -1,11 +1,13 @@
-import { Alert, Button, CircularProgress, Collapse, Stack, TextField, Typography } from "@mui/material"
+import { Alert, Avatar, Button, CircularProgress, Collapse, IconButton, LinearProgress, Stack, TextField, Typography } from "@mui/material"
 import MotionWrapper from "./MotionWrapper"
 import { useFormik } from "formik"
 import * as yup from 'yup'
-import { useState } from "react"
+import { SyntheticEvent, useState } from "react"
 import APIMethods from "@/lib/axios/api"
 import useUserSession from "@/lib/store/useUserSession"
 import useSignUpStore from "@/lib/store/useSignUpStore"
+import { getImageDataURL } from "@/lib/file/fileStream"
+import { Camera, CameraAlt, PersonOutline } from "@mui/icons-material"
 
 const profileValidationSchema = yup.object({
 	name: yup.string().required(),
@@ -18,6 +20,9 @@ const CompleteProfile = (): JSX.Element => {
 	const [isLoading, setIsLoading] = useState(false)
 	const [setCurrentUser] = useUserSession(state => [state.setCurrentUser])
 	const [setActiveStep] = useSignUpStore(state => [state.setActiveStep])
+	const [avatar, setAvatar] = useState<File>()
+	const [avatarSrc, setAvatarSrc] = useState<string>('')
+	const [uploadProgress, setUploadProgress] = useState(0)
 
 	const formik = useFormik({
 		initialValues: {
@@ -29,7 +34,16 @@ const CompleteProfile = (): JSX.Element => {
 			console.log(values)
 			setIsLoading(v => true)
 			try {
-				const res = await APIMethods.auth.createProfile(values)
+				await APIMethods.auth.createProfile(values)
+				if(avatar) {
+					await APIMethods.profile.setAvatar({ avatar: avatar }, (e) => {
+						const pe: ProgressEvent = e.event
+						if(pe.lengthComputable) {
+							let p = (pe.loaded / pe.total) * 100
+							setUploadProgress(p)
+						}
+					})
+				}
 				const currentUserResponse = await APIMethods.auth.verify()
 				setCurrentUser(currentUserResponse.data)
 				setActiveStep(1)
@@ -42,6 +56,23 @@ const CompleteProfile = (): JSX.Element => {
 		},
 		validationSchema: profileValidationSchema
 	})
+
+	const handleAvatarSelect = async (e: any) => {
+		const file: File = e.target.files[0]
+		if(file.size >= 524288) {
+			setError('File exceeds size limit: 512kB')
+			return
+		}
+		setError('')
+		setAvatar(file)
+		try {
+			const res = await getImageDataURL(file)
+			console.log(res)
+			if(res.url) setAvatarSrc(res.url)
+		} catch(err) {
+			console.log(err)
+		}
+	}
 
 	return (
 		<MotionWrapper>
@@ -57,6 +88,47 @@ const CompleteProfile = (): JSX.Element => {
 				>
 					Help us know you better
 				</Typography>
+				<Stack
+					alignItems='center'
+					padding='24px 0'
+				>
+					<IconButton
+						component='label'
+						sx={{
+							position: 'relative',
+							padding: '0px'
+						}}
+						onChange={handleAvatarSelect}
+					>
+						<Avatar
+							sx={{
+								position: 'relative',
+								width: 150,
+								height: 150,
+							}}
+							src={avatarSrc}
+						>
+							<CameraAlt 
+								sx={{
+									fontSize: '72px'
+								}}
+							/>
+							
+						</Avatar>
+						<input hidden type="file" accept='.png,.jpg,.jpeg' />
+						{(uploadProgress > 0) && (
+							<CircularProgress 
+								sx={{
+									position: 'absolute',
+								}}
+								size={170}
+								thickness={1}
+								variant="determinate"
+								value={uploadProgress}
+							/>
+						)}
+					</IconButton>
+				</Stack>
 				<Collapse
 					in={error ? true : false}
 				>
