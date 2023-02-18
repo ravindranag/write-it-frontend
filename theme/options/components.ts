@@ -14,7 +14,7 @@ const componentOptions: Components = {
 		styleOverrides: {
 			root: ({ ownerState, theme }: any) => ({
 				width: ownerState.fullWidth ? '100%' : 'fit-content',
-				padding: '10px 16px',
+				padding: '8px 16px',
 				'&.Mui-disabled': {
 					backgroundColor: theme.palette.disabled.main
 				}
@@ -24,6 +24,14 @@ const componentOptions: Components = {
 	MuiAppBar: {
 		defaultProps: {
 			elevation: 0
+		}
+	},
+	MuiPaper: {
+		styleOverrides: {
+			root: ({ ownerState, theme }: any) => ({
+				border: '1px solid',
+				borderColor: theme.palette.divider,
+			})
 		}
 	}
 }

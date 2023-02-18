@@ -33,6 +33,7 @@ const LoginForm = (): JSX.Element => {
 				})
 				console.log(res.data)
 				setAccessToken(res.data.accessToken)
+				localStorage.setItem('accessToken', res.data.accessToken)
 				router.replace('/')
 			} catch(err: any) {
 				console.log('error while login', err.response.data)
