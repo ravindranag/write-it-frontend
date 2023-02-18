@@ -40,6 +40,7 @@ const CompleteProfile = (): JSX.Element => {
 						const pe: ProgressEvent = e.event
 						if(pe.lengthComputable) {
 							let p = (pe.loaded / pe.total) * 100
+							console.log(p)
 							setUploadProgress(p)
 						}
 					})

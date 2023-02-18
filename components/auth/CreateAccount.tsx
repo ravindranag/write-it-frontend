@@ -3,10 +3,11 @@ import MotionWrapper from "./MotionWrapper"
 import { useFormik } from "formik"
 import * as yup from 'yup'
 import { useState } from "react"
-import { Visibility, VisibilityOff } from "@mui/icons-material"
+import { Check, Visibility, VisibilityOff } from "@mui/icons-material"
 import APIMethods from "@/lib/axios/api"
 import useUserSession from "@/lib/store/useUserSession"
 import useSignUpStore from "@/lib/store/useSignUpStore"
+import Toast from "../common/Toast"
 
 declare module "@mui/material/CircularProgress" {
 	interface CircularProgressPropsColorOverrides {
@@ -16,7 +17,8 @@ declare module "@mui/material/CircularProgress" {
 
 const validationSchema = yup.object({
 	email: yup.string().email().required().lowercase().strict(),
-	password: yup.string().required()
+	password: yup.string().required(),
+	otp: yup.string().optional()
 })
 
 const CreateAccount = (): JSX.Element => {
@@ -25,26 +27,51 @@ const CreateAccount = (): JSX.Element => {
 	const [error, setError] = useState('')
 	const [setAccessToken] = useUserSession(state => [state.setAccessToken])
 	const [setActiveStep] = useSignUpStore(state => [state.setActiveStep])
+	const [isEmailVerified, setIsEmailVerified] = useState(false)
+	const [message, setMessage] = useState('')
+	const [showOTPField, setShowOTPField] = useState(false)
+	const [isVerifying, setIsVerifying] = useState(false)
 
 	const formik = useFormik({
 		initialValues: {
 			email: '',
-			password: ''
+			password: '',
+			otp: ''
 		},
 		onSubmit: async (values) => {
 			console.log('create account', values)
-			setIsLoading(v => true)
-			try {
-				const res = await APIMethods.auth.signUp(values)
-				const { accessToken } = res.data
-				localStorage.setItem('accessToken', accessToken)
-				setAccessToken(accessToken)
-				setActiveStep(1)
-				setError(v => '')
-			} catch(err: any) {
-				setError(err.response.data.message)
-			} finally {
-				setIsLoading(v => false)
+			const { email, otp, password } = values
+			if(isEmailVerified) {
+				setIsLoading(v => true)
+				try {
+					const res = await APIMethods.auth.signUp({
+						email,
+						password
+					})
+					const { accessToken } = res.data
+					localStorage.setItem('accessToken', accessToken)
+					setAccessToken(accessToken)
+					setActiveStep(1)
+					setError(v => '')
+				} catch(err: any) {
+					setError(err.response.data.message)
+				} finally {
+					setIsLoading(v => false)
+				}
+			} else {
+				setIsLoading(v => true)
+				try {
+					const res = await APIMethods.otp.generate({
+						email
+					})
+					setMessage(v => res.data.message)
+					setShowOTPField(v => true)
+				} catch(err: any) {
+					setError(err.response.data.message)
+				} finally {
+					setIsLoading(v => false)
+				}
+
 			}
 		},
 		validationSchema: validationSchema
@@ -52,6 +79,32 @@ const CreateAccount = (): JSX.Element => {
 
 	const togglePasswordVisibility = () => {
 		setShowPassword(v => !v)
+	}
+
+	const handleVerifyEmail = async () => {
+		const { email, otp} = formik.values
+		console.log(email, otp)
+		if(!email) {
+			formik.setFieldTouched('email')
+			return
+		}
+		if(!otp) {
+			formik.setFieldTouched('otp')
+			return
+		}
+
+		try {
+			setIsVerifying(v => true)
+			const res = await APIMethods.otp.verify({
+				email,
+				otp
+			})
+			setIsEmailVerified(v => true)
+		} catch(err) {
+			setError('Email not verified')
+		} finally {
+			setIsVerifying(v => false)
+		}
 	}
 
 	return (
@@ -63,6 +116,10 @@ const CreateAccount = (): JSX.Element => {
 				padding='24px'
 				gap='24px'
 			>
+				<Toast 
+					message={message}
+					setMessage={setMessage}
+				/>
 				<Typography
 					variant='h3'
 				>
@@ -108,6 +165,34 @@ const CreateAccount = (): JSX.Element => {
 							</IconButton>)
 						}}
 					/>
+					<Collapse
+						in={showOTPField}
+					>
+						<TextField
+							name='otp'
+							label='OTP'
+							value={formik.values.otp}
+							onChange={formik.handleChange}
+							onBlur={formik.handleBlur}
+							error={ (formik.touched.otp && formik.errors.otp) ? true : false }
+							helperText={formik.errors.otp}
+							required
+							fullWidth
+							InputProps={{
+								endAdornment: isEmailVerified ?
+								(
+									<Check />
+								) : (
+									<Button
+										variant="text"
+										onClick={() => handleVerifyEmail()}
+									>
+										{ isVerifying ? <CircularProgress size={14} /> : 'Verify'}
+									</Button>
+								)
+							}}
+						/>
+					</Collapse>
 				</Stack>
 				<Button
 					variant="contained"
@@ -115,7 +200,7 @@ const CreateAccount = (): JSX.Element => {
 					fullWidth
 					disabled={isLoading}
 				>
-					{ isLoading ? <CircularProgress color='white' size={25} /> : 'Next' }
+					{ isLoading ? <CircularProgress color='white' size={25} /> : (isEmailVerified ? 'Next' : 'Verify Email') }
 				</Button>
 			</Stack>
 		</MotionWrapper>

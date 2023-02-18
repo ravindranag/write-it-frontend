@@ -16,6 +16,15 @@ type UpdateAvatarData = {
 	avatar: File
 }
 
+type GenerateOTPData = {
+	email: string
+}
+
+type VerifyOTPData = {
+	email: string
+	otp: string
+}
+
 type UploadProgressCallback = (progressEvent: AxiosProgressEvent) => void
 
 const APIInstance: AxiosInstance = axios.create({
@@ -42,6 +51,10 @@ const APIMethods = {
 			},
 			onUploadProgress: trackUploadProgress
 		})
+	},
+	otp: {
+		generate: (data: GenerateOTPData) => APIInstance.post('/otp/generate', data),
+		verify: (data: VerifyOTPData) => APIInstance.post('/otp/verify', data)
 	}
 }
 
