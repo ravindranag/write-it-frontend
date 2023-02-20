@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-type CurrentUser = {
+export type CurrentUser = {
 	email: string
 	profile: {
 		name: string
@@ -13,8 +13,8 @@ type CurrentUser = {
 type UserSession = {
 	accessToken: string
 	setAccessToken: (token: string) => void
-	currentUser?: CurrentUser
-	setCurrentUser: (user: CurrentUser) => void
+	currentUser?: CurrentUser | null
+	setCurrentUser: (user: CurrentUser | null) => void
 }
 
 const useUserSession = create<UserSession>()((set) => ({
@@ -22,7 +22,7 @@ const useUserSession = create<UserSession>()((set) => ({
 	setAccessToken: (token) => set({
 		accessToken: token
 	}),
-	currentUser: undefined,
+	currentUser: null,
 	setCurrentUser: (user) => set({ currentUser: user })
 }))
 

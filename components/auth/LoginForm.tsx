@@ -17,7 +17,7 @@ const LoginForm = (): JSX.Element => {
 	const [showPassword, setShowPassword] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 	const [error, setError] = useState('')
-	const [setAccessToken] = useUserSession(state => [state.setAccessToken])
+	const [setAccessToken, setCurrentUser] = useUserSession(state => [state.setAccessToken, state.setCurrentUser])
 	const router = useRouter()
 	const formik = useFormik({
 		initialValues: {
@@ -34,7 +34,10 @@ const LoginForm = (): JSX.Element => {
 				console.log(res.data)
 				setAccessToken(res.data.accessToken)
 				localStorage.setItem('accessToken', res.data.accessToken)
-				router.replace('/')
+				const currentUserResponse = await APIMethods.auth.verify()
+				setCurrentUser(currentUserResponse.data)
+				router.replace('/', undefined, {
+				})
 			} catch(err: any) {
 				console.log('error while login', err.response.data)
 				setError(v => err.response.data.message)

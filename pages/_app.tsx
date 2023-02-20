@@ -9,9 +9,11 @@ import NextNProgress from 'nextjs-progressbar'
 import { useEffect, useLayoutEffect } from 'react'
 import APIMethods from '@/lib/axios/api'
 import useUserSession from '@/lib/store/useUserSession'
+import { useRouter } from 'next/router'
 
 export default function App({ Component, pageProps }: AppProps) {
 	const [setCurrentUser] = useUserSession(state => [state.setCurrentUser])
+	const router = useRouter()
 	
 	useEffect(() => {
 		const accessToken = localStorage.getItem('accessToken')
@@ -44,6 +46,7 @@ export default function App({ Component, pageProps }: AppProps) {
 			<Header />
 			<Stack
 				flexGrow={1}
+				overflow='hidden'
 			>
 				<AnimatePresence
 					// presenceAffectsLayout
