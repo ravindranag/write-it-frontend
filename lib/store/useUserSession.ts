@@ -6,24 +6,23 @@ export type CurrentUser = {
 		name: string
 		username: string
 		bio?: string
-		avatar?: string
+		avatar?: string,
+		twitter_username: string
 	}
 }
 
 type UserSession = {
-	accessToken: string
-	setAccessToken: (token: string) => void
+	fetchingUser: boolean
+	setFetchingUser: (f: boolean) => void
 	currentUser?: CurrentUser | null
 	setCurrentUser: (user: CurrentUser | null) => void
 }
 
 const useUserSession = create<UserSession>()((set) => ({
-	accessToken: '',
-	setAccessToken: (token) => set({
-		accessToken: token
-	}),
 	currentUser: null,
-	setCurrentUser: (user) => set({ currentUser: user })
+	setCurrentUser: (user) => set({ currentUser: user }),
+	fetchingUser: false,
+	setFetchingUser: (f) => set({ fetchingUser: f })
 }))
 
 export default useUserSession

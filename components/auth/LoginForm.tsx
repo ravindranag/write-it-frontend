@@ -17,7 +17,7 @@ const LoginForm = (): JSX.Element => {
 	const [showPassword, setShowPassword] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 	const [error, setError] = useState('')
-	const [setAccessToken, setCurrentUser] = useUserSession(state => [state.setAccessToken, state.setCurrentUser])
+	const [setCurrentUser] = useUserSession(state => [state.setCurrentUser])
 	const router = useRouter()
 	const formik = useFormik({
 		initialValues: {
@@ -27,20 +27,18 @@ const LoginForm = (): JSX.Element => {
 		onSubmit: async ({ email, password }) => {
 			setIsLoading(v => true)
 			try {
-				const res = await APIMethods.auth.login({
+				const { access_token } = (await APIMethods.auth.login({
 					email,
 					password
-				})
-				console.log(res.data)
-				setAccessToken(res.data.accessToken)
-				localStorage.setItem('accessToken', res.data.accessToken)
-				const currentUserResponse = await APIMethods.auth.verify()
-				setCurrentUser(currentUserResponse.data)
+				})).data
+				localStorage.setItem('accessToken', access_token)
+				const user = (await APIMethods.auth.verify()).data
+				setCurrentUser(user)
 				router.replace('/', undefined, {
 				})
 			} catch(err: any) {
 				console.log('error while login', err.response.data)
-				setError(v => err.response.data.message)
+				setError(v => err.response.data)
 			} finally {
 				setIsLoading(v => false)
 			}

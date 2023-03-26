@@ -12,22 +12,26 @@ import useUserSession from '@/lib/store/useUserSession'
 import { useRouter } from 'next/router'
 
 export default function App({ Component, pageProps }: AppProps) {
-	const [setCurrentUser] = useUserSession(state => [state.setCurrentUser])
+	const [setCurrentUser, fetchingUser, setFetchingUser] = useUserSession(state => [state.setCurrentUser, state.fetchingUser, state.setFetchingUser])
 	const router = useRouter()
 	
 	useEffect(() => {
 		const accessToken = localStorage.getItem('accessToken')
 		
 		if(accessToken) {
+			setFetchingUser(true)
 			APIMethods.auth.verify()
 				.then(res => res.data)
-				.then(({ currentUser }) => {
+				.then(currentUser => {
 					// console.log(user)
 					setCurrentUser(currentUser)
 				})
 				.catch(err => {
 					console.log('User logged out. Login to continue')
 					localStorage.removeItem('accessToken')
+				})
+				.finally(() => {
+					setFetchingUser(false)
 				})
 		} else {
 			console.log('Guest mode')

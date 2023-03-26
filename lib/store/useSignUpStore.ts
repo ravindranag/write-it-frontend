@@ -4,6 +4,22 @@ interface SignupStore {
 	activeStep: number
 	setActiveStep: (by: number) => void
 	steps: Step[]
+	user: User | undefined
+	profile: Profile
+	setUser: (u: User) => void
+	setProfile: (p: Profile) => void
+}
+
+interface User {
+	email: string
+	password: string
+}
+
+interface Profile {
+	name: string
+	username: string
+	bio?: string
+	twitter_username: string
 }
 
 interface Step {
@@ -35,6 +51,18 @@ const useSignUpStore = create<SignupStore>()((set, get) => ({
 		set((state) => ({ activeStep: state.activeStep + by }))
 	},
 	steps: steps,
+	user: {
+		email: '',
+		password: ''
+	},
+	profile: {
+		name: '',
+		twitter_username: '',
+		username: '',
+		bio: ''
+	},
+	setUser: (u) => set({ user: u }),
+	setProfile: (p) => set({ profile: p })
 }))
 
 export default useSignUpStore

@@ -1,15 +1,21 @@
 import axios, { AxiosInstance, AxiosProgressEvent } from "axios";
+import { config } from "process";
 
 type LoginSignUpData = {
 	email: String,
 	password: String
 }
 
-type CreateProfileData = {
-	username: string
-	name: string
-	bio: string
-	avatar?: string
+type CreateUserData = {
+	email: string
+	password: string
+	profile: {
+		username: string
+		name: string
+		bio?: string
+		avatar?: string
+		twitter_username: string
+	}
 }
 
 type UpdateAvatarData = {
@@ -28,24 +34,25 @@ type VerifyOTPData = {
 type UploadProgressCallback = (progressEvent: AxiosProgressEvent) => void
 
 const APIInstance: AxiosInstance = axios.create({
-	baseURL: 'https://write-it.onrender.com'
+	baseURL: process.env.NEXT_PUBLIC_API_URL
+})
+const AuthorizedAPIInstance: AxiosInstance = axios.create({
+	baseURL: process.env.NEXT_PUBLIC_API_URL
 })
 
-APIInstance.interceptors.request.use(function (config) {
-	config.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`
-
+AuthorizedAPIInstance.interceptors.request.use((config) => {
+	config.headers.Authorization = localStorage.getItem('accessToken')
 	return config
 })
 
 const APIMethods = {
 	auth: {
 		login: (data: LoginSignUpData) => APIInstance.post('/user/login', data),
-		signUp: (data: LoginSignUpData) => APIInstance.post('/user/signup', data),
-		createProfile: (data: CreateProfileData) => APIInstance.post('/profile', data),
-		verify: () => APIInstance.get('/user/verify')
+		signUp: (data: CreateUserData) => APIInstance.post('/user/signup', data),
+		verify: () => AuthorizedAPIInstance.get('/user')
 	},
 	profile: {
-		setAvatar: (data: UpdateAvatarData, trackUploadProgress: UploadProgressCallback) => APIInstance.post('/profile/avatar', data, {
+		setAvatar: (data: UpdateAvatarData, trackUploadProgress: UploadProgressCallback) => AuthorizedAPIInstance.post('/profile/avatar', data, {
 			headers: {
 				'Content-Type': 'multipart/form-data'
 			},
@@ -53,8 +60,8 @@ const APIMethods = {
 		})
 	},
 	otp: {
-		generate: (data: GenerateOTPData) => APIInstance.post('/otp/generate', data),
-		verify: (data: VerifyOTPData) => APIInstance.post('/otp/verify', data)
+		generate: (data: GenerateOTPData) => APIInstance.post('user/otp/generate', data),
+		verify: (data: VerifyOTPData) => APIInstance.post('user/otp/verify', data)
 	}
 }
 

@@ -20,31 +20,20 @@ const NextSteps = (): JSX.Element => {
 				<Typography
 					variant='h3'
 				>
-					Publish your writing or read other writer&#39;s work
+					Login to your account
 				</Typography>
 				<Stack
 					gap='16px'
 				>
 					<Link
-						href='/new'
+						href='/auth/login'
 						passHref
 					>
 						<Button
 							variant="contained"
 							fullWidth
 						>
-							Write a new article
-						</Button>
-					</Link>
-					<Link
-						href='/'
-						passHref
-					>
-						<Button
-							variant='outlined'
-							fullWidth
-						>
-							Continue reading
+							Login
 						</Button>
 					</Link>
 				</Stack>

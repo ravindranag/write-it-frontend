@@ -7,51 +7,49 @@ import APIMethods from "@/lib/axios/api"
 import useUserSession from "@/lib/store/useUserSession"
 import useSignUpStore from "@/lib/store/useSignUpStore"
 import { getImageDataURL } from "@/lib/file/fileStream"
-import { Camera, CameraAlt, PersonOutline } from "@mui/icons-material"
+import { ArrowBack, Camera, CameraAlt, PersonOutline } from "@mui/icons-material"
 
 const profileValidationSchema = yup.object({
 	name: yup.string().required(),
 	username: yup.string().required().min(3).max(30).matches(/^[a-z,A-Z][a-z,A-Z,_,0-9]+$/gm, { message: 'Username cannot start with a number, can only contain (a-z), (A-Z), (0-9), and "_"' }),
-	bio: yup.string().required()
+	bio: yup.string().required(),
+	twitter_username: yup.string().required()
 })
 
 const CompleteProfile = (): JSX.Element => {
 	const [error, setError] = useState('')
 	const [isLoading, setIsLoading] = useState(false)
 	const [setCurrentUser] = useUserSession(state => [state.setCurrentUser])
-	const [setActiveStep] = useSignUpStore(state => [state.setActiveStep])
+	const [setActiveStep, user, profile, setProfile] = useSignUpStore(state => [state.setActiveStep, state.user, state.profile, state.setProfile])
 	const [avatar, setAvatar] = useState<File>()
 	const [avatarSrc, setAvatarSrc] = useState<string>('')
 	const [uploadProgress, setUploadProgress] = useState(0)
 
 	const formik = useFormik({
 		initialValues: {
-			name: '',
-			username: '',
-			bio: ''
+			name: profile.name,
+			username: profile.username,
+			bio: profile.bio,
+			twitter_username: profile.twitter_username
 		},
 		onSubmit: async (values) => {
-			console.log(values)
+			setProfile(values)
+			let data = {
+				email: user!.email,
+				password: user!.password,
+				profile: values
+			}
 			setIsLoading(v => true)
+			console.log(data)
 			try {
-				await APIMethods.auth.createProfile(values)
-				if(avatar) {
-					await APIMethods.profile.setAvatar({ avatar: avatar }, (e) => {
-						const pe: ProgressEvent = e.event
-						if(pe.lengthComputable) {
-							let p = (pe.loaded / pe.total) * 100
-							console.log(p)
-							setUploadProgress(p)
-						}
-					})
-				}
-				const currentUserResponse = await APIMethods.auth.verify()
-				setCurrentUser(currentUserResponse.data)
+				await APIMethods.auth.signUp(data)
 				setActiveStep(1)
-				setError(v => '')
-			} catch(err: any) {
-				setError(err.response.data.message)
-			} finally {
+			}
+			catch(err: any) {
+				console.error(err)
+				setError(err.response.data)
+			}
+			finally {
 				setIsLoading(v => false)
 			}
 		},
@@ -84,52 +82,22 @@ const CompleteProfile = (): JSX.Element => {
 				padding='24px'
 				gap='24px'
 			>
+				<Button
+					startIcon={
+						<ArrowBack />
+					}
+					onClick={() => {
+						setProfile(formik.values)
+						setActiveStep(-1)
+					}}
+				>
+					Back
+				</Button>
 				<Typography
 					variant='h3'
 				>
 					Help us know you better
 				</Typography>
-				<Stack
-					alignItems='center'
-					padding='24px 0'
-				>
-					<IconButton
-						component='label'
-						sx={{
-							position: 'relative',
-							padding: '0px'
-						}}
-						onChange={handleAvatarSelect}
-					>
-						<Avatar
-							sx={{
-								position: 'relative',
-								width: 150,
-								height: 150,
-							}}
-							src={avatarSrc}
-						>
-							<CameraAlt 
-								sx={{
-									fontSize: '72px'
-								}}
-							/>
-							
-						</Avatar>
-						<input hidden type="file" accept='.png,.jpg,.jpeg' />
-						{(uploadProgress > 0) && (
-							<CircularProgress 
-								sx={{
-									position: 'absolute',
-								}}
-								size={170}
-								thickness={1}
-								variant="determinate"
-								value={uploadProgress}
-							/>
-						)}
-					</IconButton>
-				</Stack>
 				<Collapse
 					in={error ? true : false}
 				>
@@ -172,6 +140,16 @@ const CompleteProfile = (): JSX.Element => {
 						helperText={formik.errors.bio}
 						multiline
 						rows={3}
+						required
+					/>
+					<TextField 
+						name='twitter_username'
+						label='Twitter Username'
+						value={formik.values.twitter_username}
+						onChange={formik.handleChange}
+						onBlur={formik.handleBlur}
+						error={ (formik.touched.twitter_username && formik.errors.twitter_username) ? true : false }
+						helperText={formik.errors.twitter_username}
 						required
 					/>
 				</Stack>

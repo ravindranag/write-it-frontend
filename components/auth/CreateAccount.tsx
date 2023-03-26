@@ -25,8 +25,7 @@ const CreateAccount = (): JSX.Element => {
 	const [showPassword, setShowPassword] = useState(false)
 	const [isLoading, setIsLoading] = useState(false)
 	const [error, setError] = useState('')
-	const [setAccessToken] = useUserSession(state => [state.setAccessToken])
-	const [setActiveStep] = useSignUpStore(state => [state.setActiveStep])
+	const [setActiveStep, setUser, user] = useSignUpStore(state => [state.setActiveStep, state.setUser, state.user])
 	const [isEmailVerified, setIsEmailVerified] = useState(false)
 	const [message, setMessage] = useState('')
 	const [showOTPField, setShowOTPField] = useState(false)
@@ -34,40 +33,30 @@ const CreateAccount = (): JSX.Element => {
 
 	const formik = useFormik({
 		initialValues: {
-			email: '',
-			password: '',
+			email: user!.email,
+			password: user!.password,
 			otp: ''
 		},
 		onSubmit: async (values) => {
-			console.log('create account', values)
 			const { email, otp, password } = values
+
+			console.log('create account', values)
 			if(isEmailVerified) {
-				setIsLoading(v => true)
-				try {
-					const res = await APIMethods.auth.signUp({
-						email,
-						password
-					})
-					const { accessToken } = res.data
-					localStorage.setItem('accessToken', accessToken)
-					setAccessToken(accessToken)
-					setActiveStep(1)
-					setError(v => '')
-				} catch(err: any) {
-					setError(err.response.data.message)
-				} finally {
-					setIsLoading(v => false)
-				}
+				setUser({
+					email,
+					password
+				})
+				setActiveStep(1)
 			} else {
 				setIsLoading(v => true)
 				try {
 					const res = await APIMethods.otp.generate({
 						email
 					})
-					setMessage(v => res.data.message)
+					setMessage(v => res.data)
 					setShowOTPField(v => true)
 				} catch(err: any) {
-					setError(err.response.data.message)
+					setError(err.response.data)
 				} finally {
 					setIsLoading(v => false)
 				}
@@ -184,7 +173,7 @@ const CreateAccount = (): JSX.Element => {
 									<Check />
 								) : (
 									<Button
-										variant="text"
+										variant="contained"
 										onClick={() => handleVerifyEmail()}
 									>
 										{ isVerifying ? <CircularProgress size={14} /> : 'Verify'}
@@ -200,7 +189,7 @@ const CreateAccount = (): JSX.Element => {
 					fullWidth
 					disabled={isLoading}
 				>
-					{ isLoading ? <CircularProgress color='white' size={25} /> : (isEmailVerified ? 'Next' : 'Verify Email') }
+					{ isLoading ? <CircularProgress color='white' size={25} /> : (isEmailVerified ? 'Next' : showOTPField ? 'Resend OTP' : 'Verify Email') }
 				</Button>
 			</Stack>
 		</MotionWrapper>
