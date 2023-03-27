@@ -58,7 +58,7 @@ const UserActions = (): JSX.Element => {
 			direction='row'
 			gap='14px'
 		>
-			{router.pathname !== '/blog/new' 
+			{router.pathname !== '/write' 
 				? (<Link
 					href='/blog/new'
 				>

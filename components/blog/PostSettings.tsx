@@ -35,7 +35,7 @@ const PostSettings = () => {
 			try {
 				setIsLoading(v => true)
 				await APIMethods.blog.create(blog)
-				router.replace(`/blog/${values.slug}`)
+				router.replace(`/read/${values.slug}`)
 			}
 			catch(err) {
 				alert('Blog creation failed')

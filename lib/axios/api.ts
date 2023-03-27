@@ -73,7 +73,8 @@ const APIMethods = {
 	},
 	blog: {
 		checkSlugAvailability: (slug: string) => AuthorizedAPIInstance.get(`blog/slug/${slug}`),
-		create: (data: CreateBlogData) => AuthorizedAPIInstance.post('blog/', data)
+		create: (data: CreateBlogData) => AuthorizedAPIInstance.post('blog/', data),
+		getBySlug: (slug: string) => APIInstance.get(`/blog/${slug}`)
 	}
 }
 
