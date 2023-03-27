@@ -1,3 +1,4 @@
+import { OutputData } from "@editorjs/editorjs";
 import axios, { AxiosInstance, AxiosProgressEvent } from "axios";
 import { config } from "process";
 
@@ -31,6 +32,13 @@ type VerifyOTPData = {
 	otp: string
 }
 
+type CreateBlogData = {
+	title: string
+	slug: string
+	description?: string
+	data: OutputData
+}
+
 type UploadProgressCallback = (progressEvent: AxiosProgressEvent) => void
 
 const APIInstance: AxiosInstance = axios.create({
@@ -62,6 +70,10 @@ const APIMethods = {
 	otp: {
 		generate: (data: GenerateOTPData) => APIInstance.post('user/otp/generate', data),
 		verify: (data: VerifyOTPData) => APIInstance.post('user/otp/verify', data)
+	},
+	blog: {
+		checkSlugAvailability: (slug: string) => AuthorizedAPIInstance.get(`blog/slug/${slug}`),
+		create: (data: CreateBlogData) => AuthorizedAPIInstance.post('blog/', data)
 	}
 }
 

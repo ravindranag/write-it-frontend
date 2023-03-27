@@ -1,9 +1,11 @@
 import useAvatarUrl from "@/lib/hooks/useAvatarlUrl"
+import useEditorStore from "@/lib/store/useEditorStore"
 import useUserSession, { CurrentUser } from "@/lib/store/useUserSession"
 import { getImageUrl } from "@/lib/utils/getImageUrl"
 import { Add, Logout, Settings } from "@mui/icons-material"
 import { AppBar, Avatar, Button, CircularProgress, IconButton, ListItemAvatar, ListItemIcon, ListItemText, Menu, MenuItem, Stack, Tooltip, Typography } from "@mui/material"
 import Link from "next/link"
+import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { shallow } from 'zustand/shallow'
 
@@ -35,6 +37,8 @@ const Logo = (): JSX.Element => {
 const UserActions = (): JSX.Element => {
 	const [currentUser, setCurrentUser] = useUserSession(state => [state.currentUser, state.setCurrentUser], shallow)
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
+	const [togglePostSettings, data] = useEditorStore(state => [state.togglePostSettings, state.data])
+	const router = useRouter()
 
 	const handleAvatarClick = (e: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(e.currentTarget)
@@ -54,14 +58,29 @@ const UserActions = (): JSX.Element => {
 			direction='row'
 			gap='14px'
 		>
-			<Button
-				variant="contained"
-				startIcon={
-					<Add />
-				}
-			>
-				New Blog
-			</Button>
+			{router.pathname !== '/blog/new' 
+				? (<Link
+					href='/blog/new'
+				>
+					<Button
+						variant="contained"
+						startIcon={
+							<Add />
+						}
+					>
+						New Blog
+					</Button>
+				</Link>)
+				: (
+					<Button
+						variant='contained'
+						onClick={() => togglePostSettings()}
+						disabled={ data?.blocks === undefined || data.blocks.length === 0 }
+					>
+						Post
+					</Button>
+				)	
+			}
 			<Tooltip
 				title='Account settings'
 			>

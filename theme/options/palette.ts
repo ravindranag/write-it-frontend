@@ -24,7 +24,7 @@ const paletteOptions: PaletteOptions = {
 		contrastText: '#ffffff'
 	},
 	disabled: {
-		main: '#121212',
+		main: '#ccc',
 		light: '#121212',
 		dark: '#121212',
 		contrastText: '#ccc'
