@@ -60,7 +60,7 @@ const UserActions = (): JSX.Element => {
 		>
 			{router.pathname !== '/write' 
 				? (<Link
-					href='/blog/new'
+					href='/write'
 				>
 					<Button
 						variant="contained"

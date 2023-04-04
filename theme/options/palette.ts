@@ -28,6 +28,10 @@ const paletteOptions: PaletteOptions = {
 		light: '#121212',
 		dark: '#121212',
 		contrastText: '#ccc'
+	},
+	text: {
+		primary: '#000000',
+		secondary: '#999'
 	}
 }
 

@@ -10,6 +10,7 @@ import { useEffect, useLayoutEffect } from 'react'
 import APIMethods from '@/lib/axios/api'
 import useUserSession from '@/lib/store/useUserSession'
 import { useRouter } from 'next/router'
+import AppToast from '@/components/common/AppToast'
 
 export default function App({ Component, pageProps }: AppProps) {
 	const [setCurrentUser, fetchingUser, setFetchingUser] = useUserSession(state => [state.setCurrentUser, state.fetchingUser, state.setFetchingUser])
@@ -47,6 +48,7 @@ export default function App({ Component, pageProps }: AppProps) {
 			<NextNProgress 
 				color='black'
 			/>
+			<AppToast />
 			<Header />
 			<Stack
 				flexGrow={1}

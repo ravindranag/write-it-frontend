@@ -1,4 +1,4 @@
-import PostSettings from "@/components/blog/PostSettings";
+import PostSettings from "@/components/write/PostSettings";
 import Page from "@/components/layout/Page";
 import useEditorStore from "@/lib/store/useEditorStore";
 import { Edit, Visibility } from "@mui/icons-material";

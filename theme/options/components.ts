@@ -17,7 +17,8 @@ const componentOptions: Components = {
 				padding: '8px 16px',
 				'&.Mui-disabled': {
 					backgroundColor: theme.palette.disabled.main
-				}
+				},
+				textTransform: 'none'
 			})
 		}
 	},

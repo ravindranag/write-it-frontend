@@ -30,8 +30,10 @@ const Reader: FC = (): JSX.Element => {
 	return (
 		<div
 			id='reader'
+			style={{
+				fontFamily: 'Plus Jakarta Sans'
+			}}
 		>
-
 		</div>
 	)
 }
