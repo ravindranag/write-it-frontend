@@ -62,7 +62,7 @@ export default function App({ Component, pageProps }: AppProps) {
 					<Component {...pageProps} />
 				</AnimatePresence>
 			</Stack>
-			<Footer />
+			{/* <Footer /> */}
 		</Stack>
 	</AppTheme>
   )

@@ -8,6 +8,7 @@ import { OutputData } from "@editorjs/editorjs";
 import BlogCard from "@/components/home/BlogCard";
 import useToastStore from "@/lib/store/useToastStore";
 import AllBlogsContainer from "@/components/home/AllBlogsContainer";
+import RecommendationDrawer from "@/components/home/RecommendationDrawer";
 
 type BlogAuthor = {
 	name: string
@@ -49,7 +50,10 @@ const Home: NextPage = () => {
 
 	return (
 		<Page>
-			<Stack>
+			<Stack
+				direction='row'
+			>
+				<RecommendationDrawer />
 				{ allBlogs && <AllBlogsContainer allBlogs={allBlogs} /> }	
 			</Stack>
 		</Page>

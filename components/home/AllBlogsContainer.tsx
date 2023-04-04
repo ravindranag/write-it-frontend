@@ -30,6 +30,7 @@ type Props = {
 const AllBlogsContainer = ({ allBlogs }: Props): JSX.Element => {
 	return (
 		<Stack
+			width='100%'
 			gap='16px'
 			padding='32px'
 		>

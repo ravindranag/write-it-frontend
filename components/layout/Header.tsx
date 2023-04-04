@@ -1,4 +1,5 @@
 import useAvatarUrl from "@/lib/hooks/useAvatarlUrl"
+import useDrawerStore from "@/lib/store/useDrawerStore"
 import useEditorStore from "@/lib/store/useEditorStore"
 import useUserSession, { CurrentUser } from "@/lib/store/useUserSession"
 import { getImageUrl } from "@/lib/utils/getImageUrl"
@@ -6,7 +7,7 @@ import { Add, Logout, Settings } from "@mui/icons-material"
 import { AppBar, Avatar, Button, CircularProgress, IconButton, ListItemAvatar, ListItemIcon, ListItemText, Menu, MenuItem, Stack, Tooltip, Typography } from "@mui/material"
 import Link from "next/link"
 import { useRouter } from "next/router"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { shallow } from 'zustand/shallow'
 
 declare module '@mui/material/AppBar' {
@@ -159,9 +160,17 @@ const GuestActions = (): JSX.Element => {
 
 const Header = (): JSX.Element => {
 	const [currentUser, fetchingUser] = useUserSession(state => [state.currentUser, state.fetchingUser])
+	const [setHeaderHeight] = useDrawerStore(state => [state.setHeaderHeight])
+	const headerRef = useRef<HTMLDivElement>(null)
+
+	useEffect(() => {
+		console.log(headerRef.current?.clientHeight)
+		setHeaderHeight(headerRef.current?.clientHeight)
+	}, [])
 
 	return (
 		<AppBar
+			ref={headerRef}
 			position='sticky'
 			color='white'
 			sx={{
