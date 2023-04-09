@@ -4,6 +4,8 @@ import EditorJS, { OutputData } from "@editorjs/editorjs"
 import Paragraph from '@editorjs/paragraph'
 import Header from '@editorjs/header'
 import SimpleImage from '@editorjs/simple-image'
+import Image from "next/image"
+
 
 const Reader: FC = (): JSX.Element => {
 	const [editor, setEditor, data] = useReaderStore(state => [state.editor, state.setEditor, state.data, state.setData])
@@ -30,7 +32,7 @@ const Reader: FC = (): JSX.Element => {
 		<div
 			id='reader'
 			style={{
-				fontFamily: 'Plus Jakarta Sans'
+				fontFamily: 'Plus Jakarta Sans',
 			}}
 		>
 		</div>

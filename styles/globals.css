@@ -16,3 +16,10 @@ a, a:hover, a:visited, a:focus, a:focus-visible{
 #editorjs h1, h2, h3, h4, h5, h6 {
 	font-weight: 800;
 }
+
+#reader .ce-block__content {
+	margin: 0
+}
+#reader .codex-editor__redactor {
+	padding-bottom: 0 !important;
+}

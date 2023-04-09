@@ -75,7 +75,9 @@ const APIMethods = {
 		checkSlugAvailability: (slug: string) => AuthorizedAPIInstance.get(`blog/slug/${slug}`),
 		create: (data: CreateBlogData) => AuthorizedAPIInstance.post('blog/', data),
 		getBySlug: (slug: string) => APIInstance.get(`/blog/${slug}`),
-		getLatestBlogs: () => APIInstance.get('blog/')
+		getLatestBlogs: () => APIInstance.get('blog/'),
+		blogLiked: (slug: string) => AuthorizedAPIInstance.get(`/blog/${slug}/liked`),
+		like: (slug: string) => AuthorizedAPIInstance.put(`/blog/${slug}/like`)
 	},
 	keyword: {
 		getAllKeywords: () => APIInstance.get('/keyword')
