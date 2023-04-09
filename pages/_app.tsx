@@ -11,6 +11,9 @@ import APIMethods from '@/lib/axios/api'
 import useUserSession from '@/lib/store/useUserSession'
 import { useRouter } from 'next/router'
 import AppToast from '@/components/common/AppToast'
+import { DefaultSeo } from 'next-seo'
+import SEO from '../next-seo.config'
+
 
 export default function App({ Component, pageProps }: AppProps) {
 	const [setCurrentUser, fetchingUser, setFetchingUser] = useUserSession(state => [state.setCurrentUser, state.fetchingUser, state.setFetchingUser])
@@ -45,6 +48,7 @@ export default function App({ Component, pageProps }: AppProps) {
 			minHeight='100vh'
 			justifyContent='space-between'
 		>
+			<DefaultSeo {...SEO} />
 			<NextNProgress 
 				color='black'
 			/>

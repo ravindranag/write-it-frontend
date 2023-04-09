@@ -76,6 +76,12 @@ const APIMethods = {
 		create: (data: CreateBlogData) => AuthorizedAPIInstance.post('blog/', data),
 		getBySlug: (slug: string) => APIInstance.get(`/blog/${slug}`),
 		getLatestBlogs: () => APIInstance.get('blog/')
+	},
+	keyword: {
+		getAllKeywords: () => APIInstance.get('/keyword')
+	},
+	category: {
+		getAllCategories: () => APIInstance.get('/category')
 	}
 }
 

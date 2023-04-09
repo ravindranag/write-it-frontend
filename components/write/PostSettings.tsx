@@ -1,25 +1,39 @@
 import APIMethods from "@/lib/axios/api"
+import { useFetchKeywordsAndCategories } from "@/lib/hooks/useFetch"
 import useEditorStore from "@/lib/store/useEditorStore"
+import useLoadingStore from "@/lib/store/useLoadingStore"
 import { Close } from "@mui/icons-material"
-import { AppBar, Dialog, IconButton, Toolbar, Stack, TextField, Typography, Divider, Button, CircularProgress, Slide } from "@mui/material"
+import { AppBar, Dialog, IconButton, Toolbar, Stack, TextField, Typography, Divider, Button, CircularProgress, Slide, Autocomplete } from "@mui/material"
 import { useFormik } from "formik"
 import { useRouter } from "next/router"
-import { forwardRef, useState } from "react"
+import { forwardRef, useEffect, useState } from "react"
 import * as yup from 'yup'
+
+type MetaDataObject = {
+	id: string
+	name: string
+	description: string | null
+}
 
 const validationSchema = yup.object({
 	title: yup.string().required(),
 	slug: yup.string().lowercase().strict().matches(/^[a-z][a-z0-9-]*[a-z0-9]$/, 'Slug can only contain [a-z], [0-9], and \'-\'').required(),
-	description: yup.string().required()
+	description: yup.string().required(),
+
 })
+
+
 
 
 const PostSettings = () => {
 	const [postSettings, setPostSettings, postSettingSOpen, togglePostSettings, data] = useEditorStore(state => [state.postSettings, state.setPostSettings, state.postSettingSOpen, state.togglePostSettings, state.data])
 	const [checkingSlug, setCheckingSlug] = useState<boolean>(false)
 	const [slugAvailable, setSlugAvailable] = useState<boolean>(false)
-	const [isLoading, setIsLoading] = useState<boolean>(false)
+	const [loadingMessage, setLoadingMessage] = useLoadingStore(state => [state.loadingMessage, state.setLoadingMessage])
 	const router = useRouter()
+	const { metadata, error, isLoading } = useFetchKeywordsAndCategories()
+	const [keywords, setKeywords] = useState<MetaDataObject[]>([])
+	const [category, setCategory] = useState<MetaDataObject>()
 	const formik = useFormik({
 		initialValues: {
 			title: postSettings.title,
@@ -29,11 +43,13 @@ const PostSettings = () => {
 		onSubmit: async (values) => {
 			let blog = {
 				...values,
-				data: data!
+				data: data!,
+				keywords,
+				categoryId: category?.id
 			}
 			console.log(blog)
 			try {
-				setIsLoading(v => true)
+				setLoadingMessage('Processing')
 				await APIMethods.blog.create(blog)
 				router.replace(`/read/${values.slug}`)
 			}
@@ -41,7 +57,7 @@ const PostSettings = () => {
 				alert('Blog creation failed')
 			}
 			finally {
-				setIsLoading(v => false)
+				setLoadingMessage(null)
 			}
 		},
 		validationSchema: validationSchema
@@ -88,7 +104,7 @@ const PostSettings = () => {
 						variant='contained'
 						onClick={() => formik.handleSubmit()}
 					>
-						{ isLoading ? <CircularProgress size={24} color="white" /> : 'Publish' }
+						{ loadingMessage ? <CircularProgress size={24} color="white" /> : 'Publish' }
 					</Button>
 				</Toolbar>
 			</AppBar>
@@ -148,6 +164,27 @@ const PostSettings = () => {
 							helperText={formik.errors.description}
 							multiline
 							minRows={4}
+						/>
+						<Autocomplete 
+							options={metadata.category}
+							getOptionLabel={option => option.name}
+							renderInput={(params) => <TextField {...params} label='Category' />}
+							onChange={(e, newValue: any) => {
+								console.log(newValue)
+								setCategory(newValue)
+							}}
+							loading={isLoading}
+						/>
+						<Autocomplete
+							multiple 
+							options={metadata.keyword}
+							getOptionLabel={option => option.name}
+							renderInput={(params) => <TextField {...params} label='Keywords' />}
+							onChange={(e, newValue: any) => {
+								console.log(newValue)
+								setKeywords(newValue)
+							}}
+							loading={isLoading}
 						/>
 					</Stack>
 				</Stack>
