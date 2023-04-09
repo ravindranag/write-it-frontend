@@ -4,11 +4,13 @@ import useEditorStore from "@/lib/store/useEditorStore"
 import useUserSession, { CurrentUser } from "@/lib/store/useUserSession"
 import { getImageUrl } from "@/lib/utils/getImageUrl"
 import { Add, Logout, Settings } from "@mui/icons-material"
-import { AppBar, Avatar, Button, CircularProgress, IconButton, ListItemAvatar, ListItemIcon, ListItemText, Menu, MenuItem, Stack, Tooltip, Typography } from "@mui/material"
+import { AppBar, Avatar, Button, CircularProgress, Divider, IconButton, ListItemAvatar, ListItemIcon, ListItemText, Menu, MenuItem, Stack, Tooltip, Typography } from "@mui/material"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { useEffect, useRef, useState } from "react"
 import { shallow } from 'zustand/shallow'
+import NavItemButton from "../common/NavItemButton"
+import NavItemLink from "../common/NavItemLink"
 
 declare module '@mui/material/AppBar' {
 	export interface AppBarPropsColorOverrides {
@@ -27,11 +29,15 @@ const getAvatarSrc = (profile: CurrentUser['profile']) => {
 
 const Logo = (): JSX.Element => {
 	return (
-		<Typography
-			variant='overline'
+		<Link
+			href='/'
 		>
-			Write It
-		</Typography>
+			<Typography
+				variant='overline'
+			>
+				Write It
+			</Typography>
+		</Link>
 	)
 }
 
@@ -109,20 +115,66 @@ const UserActions = (): JSX.Element => {
 				onClose={handleAccountMenuClose}
 				PaperProps={{
 					variant: 'outlined',
-					elevation: 0
+					elevation: 0,
+					sx: {
+						'& .MuiList-root': {
+							display: 'flex',
+							flexDirection: 'column',
+							padding: 0
+						},
+						boxShadow: 'none',
+						minWidth: 200
+					}
+				}}
+				transformOrigin={{
+					horizontal: 'right',
+					vertical: 'top'
+				}}
+				anchorOrigin={{
+					horizontal: 'right',
+					vertical: 60
 				}}
 			>
-				<MenuItem
+				<Link
+					href='/'
+				>
+					<Button
+						sx={{
+							flexDirection: 'column',
+							alignItems: 'start'
+						}}
+						fullWidth
+					>
+						<Typography
+							variant='body1'
+						>
+							{currentUser?.profile.name}
+						</Typography>
+						<Typography
+							variant='body2'
+							color='text.secondary'
+						>
+							@{currentUser?.profile.username}
+						</Typography>
+					</Button>
+				</Link>
+				<Divider />
+				<NavItemLink
+					href='/dashboard'
+				>
+					Dashboard
+				</NavItemLink>
+				<NavItemLink
+					href='/settings'
+				>
+					Settings
+				</NavItemLink>
+				<Divider />
+				<NavItemButton
 					onClick={handleLogOut}
 				>
-					<ListItemIcon
-					>
-						<Logout />
-					</ListItemIcon>
-					<ListItemText>
-						Logout
-					</ListItemText>
-				</MenuItem>
+					Logout
+				</NavItemButton>
 			</Menu>
 		</Stack>
 	)

@@ -9,7 +9,6 @@ const Reader: FC = (): JSX.Element => {
 	const [editor, setEditor, data] = useReaderStore(state => [state.editor, state.setEditor, state.data, state.setData])
 
 	useEffect(() => {
-		if(editor) return
 		const e = new EditorJS({
 			holder: 'reader',
 			readOnly: true,

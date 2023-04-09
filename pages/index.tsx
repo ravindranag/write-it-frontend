@@ -9,6 +9,7 @@ import BlogCard from "@/components/home/BlogCard";
 import useToastStore from "@/lib/store/useToastStore";
 import AllBlogsContainer from "@/components/home/AllBlogsContainer";
 import RecommendationDrawer from "@/components/home/RecommendationDrawer";
+import TopBlogsDrawer from "@/components/home/TopBlogsDrawer";
 
 type BlogAuthor = {
 	name: string
@@ -55,6 +56,7 @@ const Home: NextPage = () => {
 			>
 				<RecommendationDrawer />
 				{ allBlogs && <AllBlogsContainer allBlogs={allBlogs} /> }	
+				<TopBlogsDrawer />
 			</Stack>
 		</Page>
 	)
