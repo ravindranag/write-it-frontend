@@ -26,10 +26,7 @@ const CreateAccount = (): JSX.Element => {
 	const [isLoading, setIsLoading] = useState(false)
 	const [error, setError] = useState('')
 	const [setActiveStep, setUser, user] = useSignUpStore(state => [state.setActiveStep, state.setUser, state.user])
-	const [isEmailVerified, setIsEmailVerified] = useState(false)
 	const [message, setMessage] = useState('')
-	const [showOTPField, setShowOTPField] = useState(false)
-	const [isVerifying, setIsVerifying] = useState(false)
 
 	const formik = useFormik({
 		initialValues: {
@@ -38,62 +35,18 @@ const CreateAccount = (): JSX.Element => {
 			otp: ''
 		},
 		onSubmit: async (values) => {
-			const { email, otp, password } = values
-
-			console.log('create account', values)
-			if(isEmailVerified) {
-				setUser({
-					email,
-					password
-				})
-				setActiveStep(1)
-			} else {
-				setIsLoading(v => true)
-				try {
-					const res = await APIMethods.otp.generate({
-						email
-					})
-					setMessage(v => res.data)
-					setShowOTPField(v => true)
-				} catch(err: any) {
-					setError(err.response.data)
-				} finally {
-					setIsLoading(v => false)
-				}
-
-			}
+			const { email, password } = values
+			setUser({
+				email,
+				password
+			})
+			setActiveStep(1)
 		},
 		validationSchema: validationSchema
 	})
 
 	const togglePasswordVisibility = () => {
 		setShowPassword(v => !v)
-	}
-
-	const handleVerifyEmail = async () => {
-		const { email, otp} = formik.values
-		console.log(email, otp)
-		if(!email) {
-			formik.setFieldTouched('email')
-			return
-		}
-		if(!otp) {
-			formik.setFieldTouched('otp')
-			return
-		}
-
-		try {
-			setIsVerifying(v => true)
-			const res = await APIMethods.otp.verify({
-				email,
-				otp
-			})
-			setIsEmailVerified(v => true)
-		} catch(err) {
-			setError('Email not verified')
-		} finally {
-			setIsVerifying(v => false)
-		}
 	}
 
 	return (
@@ -154,34 +107,6 @@ const CreateAccount = (): JSX.Element => {
 							</IconButton>)
 						}}
 					/>
-					<Collapse
-						in={showOTPField}
-					>
-						<TextField
-							name='otp'
-							label='OTP'
-							value={formik.values.otp}
-							onChange={formik.handleChange}
-							onBlur={formik.handleBlur}
-							error={ (formik.touched.otp && formik.errors.otp) ? true : false }
-							helperText={formik.errors.otp}
-							required
-							fullWidth
-							InputProps={{
-								endAdornment: isEmailVerified ?
-								(
-									<Check />
-								) : (
-									<Button
-										variant="contained"
-										onClick={() => handleVerifyEmail()}
-									>
-										{ isVerifying ? <CircularProgress size={14} /> : 'Verify'}
-									</Button>
-								)
-							}}
-						/>
-					</Collapse>
 				</Stack>
 				<Button
 					variant="contained"
@@ -189,7 +114,7 @@ const CreateAccount = (): JSX.Element => {
 					fullWidth
 					disabled={isLoading}
 				>
-					{ isLoading ? <CircularProgress color='white' size={25} /> : (isEmailVerified ? 'Next' : showOTPField ? 'Resend OTP' : 'Verify Email') }
+					{ isLoading ? <CircularProgress color='white' size={25} /> : 'Next' }
 				</Button>
 			</Stack>
 		</MotionWrapper>

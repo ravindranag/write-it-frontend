@@ -19,11 +19,7 @@ const profileValidationSchema = yup.object({
 const CompleteProfile = (): JSX.Element => {
 	const [error, setError] = useState('')
 	const [isLoading, setIsLoading] = useState(false)
-	const [setCurrentUser] = useUserSession(state => [state.setCurrentUser])
 	const [setActiveStep, user, profile, setProfile] = useSignUpStore(state => [state.setActiveStep, state.user, state.profile, state.setProfile])
-	const [avatar, setAvatar] = useState<File>()
-	const [avatarSrc, setAvatarSrc] = useState<string>('')
-	const [uploadProgress, setUploadProgress] = useState(0)
 
 	const formik = useFormik({
 		initialValues: {
@@ -55,23 +51,6 @@ const CompleteProfile = (): JSX.Element => {
 		},
 		validationSchema: profileValidationSchema
 	})
-
-	const handleAvatarSelect = async (e: any) => {
-		const file: File = e.target.files[0]
-		if(file.size >= 524288) {
-			setError('File exceeds size limit: 512kB')
-			return
-		}
-		setError('')
-		setAvatar(file)
-		try {
-			const res = await getImageDataURL(file)
-			console.log(res)
-			if(res.url) setAvatarSrc(res.url)
-		} catch(err) {
-			console.log(err)
-		}
-	}
 
 	return (
 		<MotionWrapper>
