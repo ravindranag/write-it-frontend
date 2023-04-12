@@ -7,6 +7,7 @@ import { AppBar, Dialog, IconButton, Toolbar, Stack, TextField, Typography, Divi
 import { useFormik } from "formik"
 import { useRouter } from "next/router"
 import { forwardRef, useEffect, useState } from "react"
+import slug from "slug"
 import * as yup from 'yup'
 
 type MetaDataObject = {
@@ -132,7 +133,11 @@ const PostSettings = () => {
 							name='title'
 							label='Blog Title'
 							value={formik.values.title}
-							onChange={formik.handleChange}
+							onChange={(e) => {
+								formik.handleChange(e)
+								let s: string = slug(e.target.value)
+								formik.setFieldValue('slug', s)
+							}}
 							onBlur={formik.handleBlur}
 							error={(formik.touched.title && formik.errors.title) ? true : false}
 							helperText={formik.errors.title}
