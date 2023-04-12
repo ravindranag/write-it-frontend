@@ -51,11 +51,12 @@ const PostSettings = () => {
 			console.log(blog)
 			try {
 				setLoadingMessage('Processing')
+				await checkSlug()
 				await APIMethods.blog.create(blog)
 				router.replace(`/read/${values.slug}`)
 			}
-			catch(err) {
-				alert('Blog creation failed')
+			catch(err: any) {
+				console.log(err.message)
 			}
 			finally {
 				setLoadingMessage(null)
@@ -73,6 +74,7 @@ const PostSettings = () => {
 		catch(err: any) {
 			formik.setFieldError('slug', 'Slug already taken')
 			setSlugAvailable(v => false)
+			throw Error('Slug taken')
 		}
 		finally {
 			setCheckingSlug(v => false)
@@ -137,6 +139,7 @@ const PostSettings = () => {
 								formik.handleChange(e)
 								let s: string = slug(e.target.value)
 								formik.setFieldValue('slug', s)
+								formik.setFieldTouched('slug')
 							}}
 							onBlur={formik.handleBlur}
 							error={(formik.touched.title && formik.errors.title) ? true : false}
@@ -147,12 +150,7 @@ const PostSettings = () => {
 							label='Slug'
 							value={formik.values.slug}
 							onChange={formik.handleChange}
-							onBlur={(e) => {
-								if(!formik.errors.slug) {
-									checkSlug()
-								}
-								formik.handleBlur(e)
-							}}
+							onBlur={formik.handleBlur}
 							error={(formik.touched.slug && formik.errors.slug) ? true : false}
 							helperText={formik.errors.slug || (slugAvailable && 'Slug available')}
 							InputProps={{

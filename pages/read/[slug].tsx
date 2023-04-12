@@ -13,6 +13,7 @@ import { NextSeo } from "next-seo";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import PageNotfound from "pages/404";
 import { FC, useEffect, useState } from "react";
 
 type Author = {
@@ -64,16 +65,23 @@ const Reader = dynamic(() => import('@/components/editorjs/Reader'), {
 
 type UserActionsProps = {
 	blog: Blog
+	increaseLikeCount: () => void
+	decreaseLikeCount: () => void
 }
 
-const UserActions = ({ blog }: UserActionsProps) => {
+const UserActions = ({ blog, increaseLikeCount, decreaseLikeCount }: UserActionsProps) => {
 	const { liked, setLiked } = useBlogLiked(blog.slug)
 	const [ disabled, setDisabled ] = useState<boolean>(false)
+	const [likeCount, setLikeCount] = useState<number>(blog._count.likedBy)
 
 	const handleLike = () => {
 		setDisabled(true)
 		APIMethods.blog.like(blog.slug)
-			.then(success => setLiked(v => !v))
+			.then(success => {
+				if(liked) setLikeCount(v => v-1)
+				else setLikeCount(v => v+1)
+				setLiked(v => !v)
+			})
 			.catch(failed => console.log('like failed'))
 			.finally(() => setDisabled(false))
 	}
@@ -88,7 +96,7 @@ const UserActions = ({ blog }: UserActionsProps) => {
 				onClick={handleLike}
 				disabled={disabled}
 			>
-				{ blog?._count.likedBy }
+				{ likeCount }
 			</Button>
 		</Stack>
 	)
@@ -121,6 +129,20 @@ const ReadBlog: NextPage = () => {
 			}
 		})()
 	}, [router.isReady])
+	
+	const increaseLikeCount = () => {
+		if(!blog) return
+		let newBlog = blog
+		newBlog._count.likedBy = blog._count.likedBy + 1
+		setBlog(v => newBlog)
+	}
+
+	const decreaseLikeCount = () => {
+		if(!blog) return
+		let newBlog = blog
+		newBlog._count.likedBy = blog._count.likedBy - 1
+		setBlog(v => newBlog)
+	}
 
 	return (
 		<Page>
@@ -139,6 +161,7 @@ const ReadBlog: NextPage = () => {
 					]}
 				/>
 				{ isLoading && <CircularProgress size={32} /> }
+				{ notFound && <PageNotfound /> }
 				{ (!isLoading && data) && (
 					<Stack gap='24px' maxWidth={820} width='100%'>
 						{/* <Image 
@@ -184,7 +207,7 @@ const ReadBlog: NextPage = () => {
 						<Divider />
 						<Reader />
 						<Divider />
-						{blog && <UserActions blog={blog} />}
+						{blog && <UserActions blog={blog} increaseLikeCount={increaseLikeCount} decreaseLikeCount={decreaseLikeCount} />}
 					</Stack>
 				) }
 			</Stack>
